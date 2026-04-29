@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Pages;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 
 class ListUsers extends ListRecords
 {
