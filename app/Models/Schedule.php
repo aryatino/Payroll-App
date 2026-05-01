@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Schedule extends Model
 {
      protected $guarded = ['id'];
+     protected $with = ['user', 'shift', 'office'];
 
      public function user(): BelongsTo
      {
