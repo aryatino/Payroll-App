@@ -27,6 +27,8 @@ class SchedulesTable
                     ->searchable(),
                 TextColumn::make('office.name')
                     ->searchable(),
+                BooleanColumn::make('is_banned')
+                    ->label('Dibanned'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

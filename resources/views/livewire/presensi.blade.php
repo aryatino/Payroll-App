@@ -8,15 +8,20 @@
                         <p><strong>Nama Pegawai: </strong>{{ $schedule->user->name }}</p>
                         <p><strong>Kantor: </strong>{{ $schedule->office->name }}</p>
                         <p><strong>Shift: </strong>{{ $schedule->shift->name }}</p>
+                        @if ($schedule->iswfa)
+                            <p class="text-green-300"><strong>Status: </strong>WFA</p>
+                        @else 
+                            <p><strong>Status: </strong>WFO</p>
+                        @endif
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div class="bg-gray-100 p-4 rounded-lg">
                             <h4 class="text-lg font-bold mb-2">Jam Masuk</h4>
-                            <p>07.00</p>
+                            <p>{{ $attendance->start_time ?? 'Belum Absen' }}</p>
                         </div>
                         <div class="bg-gray-100 p-4 rounded-lg">
                             <h4 class="text-lg font-bold mb-2">Jam Keluar</h4>
-                            <p>17.00</p>
+                            <p>{{ $attendance->end_time ?? 'Belum Absen' }}</p>
                         </div>
                     </div>
                 </div>
@@ -24,10 +29,12 @@
                 <div>
                     <h2 class="text-2xl font-bold mb-2">Presensi</h2>
                      <div class="mb-3" id="map" wire:ignore></div>
-                    <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded hover:cursor-pointer hover:bg-blue-700 transition">Tag Location</button>
-                    @if ($insideRadius)
-                    <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-green-500 text-white rounded hover:cursor-pointer hover:bg-green-700 transition">Kirim Presensi</button>   
-                    @endif
+                     <form class="flex justify-between" method="POST" wire:submit='store'>
+                         <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded hover:cursor-pointer hover:bg-blue-700 transition">Tag Location</button>
+                         @if ($insideRadius)
+                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:cursor-pointer hover:bg-green-700 transition">Kirim Presensi</button>   
+                         @endif
+                     </form>
                 </div>
             </div>
         </div>
@@ -38,6 +45,7 @@
     let marker; 
     let office = [{{ $schedule->office->latitude }}, {{ $schedule->office->longitude }}];
     let radius = {{ $schedule->office->radius }};
+    let isWfa = @json($schedule->iswfa);
     let map;
     let lat;
     let lng;
@@ -75,8 +83,16 @@
                 
                 if (isWithinRadius(lat, lng, office, radius)) {
                     component.set('insideRadius', true);
+                    component.set('latitude', lat);
+                    component.set('longitude', lng);
                 } else {
-                    alert("Anda tidak berada dalam radius kantor. Presensi gagal dikirim!");
+                    if (isWfa) {
+                        component.set('insideRadius', true);
+                        component.set('latitude', lat);
+                        component.set('longitude', lng);
+                    } else {
+                        alert("Anda tidak berada dalam radius kantor. Presensi gagal dikirim!");
+                    }
                 }
             });
         } else {

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
@@ -28,6 +29,12 @@ class UserForm
                             ->relationship('roles', 'name')
                             ->preload()
                             ->searchable(), 
+                        FileUpload::make('avatar')
+                            ->image()
+                            ->disk('public')
+                            ->directory('avatars')
+                            ->visibility('public')
+                            ->preserveFilenames(),
                     ])
                 ]),
                 Group::make()->components([

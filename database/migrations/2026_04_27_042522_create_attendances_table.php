@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->double('schedule_latitude');
             $table->double('schedule_longitude');
-            $table->double('schedule_start_time');
+            $table->time('schedule_start_time');
             $table->time('schedule_end_time');
             $table->double('latitude');
             $table->double('longitude');
