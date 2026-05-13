@@ -49,12 +49,18 @@ class Presensi extends Component
                 'longitude' => $this->longitude,
                 'start_time' => Carbon::now()->toTimeString(),
                 'end_time' => Carbon::now()->toTimeString(),
+                'duration' => null,
             ]);
             } else {
+                $startTime = Carbon::parse($attendance->start_time);
+                $endTime = Carbon::now();
+                $duration = $startTime->diff($endTime)->format('%H:%I:%S');
+
                 $attendance->update([
+                    'duration' => $duration,
                     'latitude' => $this->latitude,
                     'longitude' => $this->longitude,
-                    'end_time' => Carbon::now()->toTimeString(),
+                    'end_time' => $endTime->toTimeString(),
                 ]);
                 Notification::make()
                 ->title('Presensi Berhasil')
@@ -62,9 +68,9 @@ class Presensi extends Component
                 ->body('Data presensi berhasil dibuat!!')
                 ->send();
 
-                return redirect('/admin/attendances');
-            }
-
+                }
+                
+            return redirect('/admin/attendances');
             // return redirect('/presensi', [
             //    'schedule' => $schedule,
             //    'insideRadius' => false,

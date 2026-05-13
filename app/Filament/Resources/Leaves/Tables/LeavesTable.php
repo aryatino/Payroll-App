@@ -1,38 +1,35 @@
 <?php
 
-namespace App\Filament\Resources\Schedules\Tables;
+namespace App\Filament\Resources\Leaves\Tables;
 
-use App\Models\Schedule;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 
-class SchedulesTable
+class LeavesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('Nama Pegawai')
                     ->searchable(),
-                BooleanColumn::make('iswfa')
-                    ->label('WFA'),
-                TextColumn::make('shift.name')
-                    ->description(fn (Schedule $schedule) => $schedule->shift->start_time . ' - ' . $schedule->shift->end_time)
-                    ->searchable(),
-                TextColumn::make('office.name')
-                    ->searchable(),
-                ToggleColumn::make('is_banned')
-                    ->label('Dibanned'),
-                ToggleColumn::make('is_banned')
-                    ->hidden(fn () => !Auth::user()->hasRole('super_admin')),
+                TextColumn::make('start_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('end_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                    }),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
