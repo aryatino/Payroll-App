@@ -13,5 +13,5 @@ Route::get('/login', function () {
 })->name('login'); 
 
 Route::get('/presensi', Presensi::class)->name('presensi')->middleware(['auth', 'isLeave']);
-Route::get('/payroll', Payroll::class)->middleware('auth');
+Route::get('/payroll', Payroll::class)->middleware(['auth', 'isAdmin']);
 

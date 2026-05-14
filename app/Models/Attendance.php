@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class Attendance extends Model
 {
@@ -35,5 +36,23 @@ class Attendance extends Model
         $minutes = $duration->i;
         
         return $hours . ' jam ' . $minutes . ' menit ';
+     }
+
+     #[Override]
+     protected static function booted()
+     {
+        static::saving(function ($attendance) {
+            if ($attendance->start_time && $attendance->end_time) {
+                $start = Carbon::parse($attendance->start_time);
+                $end = Carbon::parse($attendance->end_time);
+
+                if ($end->lessThan($start)) {
+                    $end->addDay();
+                }
+
+                $totalSeconds = $start->diffInSeconds($end);
+                $attendance->duration = gmdate('H:i:s', $totalSeconds);
+            }
+        });
      }
 }
